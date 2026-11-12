@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three Cities of India — Udaipur · Hyderabad · Kolkata</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --indigo:#1c2440;
+    --indigo-2:#252e52;
+    --saffron:#e2932e;
+    --terracotta:#a8462f;
+    --ivory:#faf5ea;
+    --ivory-2:#f1e9d8;
+    --teal:#12594f;
+    --gold:#bd9650;
+    --ink:#221d16;
+    --paper:#fffdf8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--ivory);
+    color:var(--ink);
+    line-height:1.55;
+  }
+  h1,h2,h3,h4{font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+  /* ---- Top bar / city switcher ---- */
+  .topbar{
+    position:sticky;top:0;z-index:50;
+    background:var(--indigo);
+    color:var(--ivory);
+    box-shadow:0 2px 14px rgba(0,0,0,.18);
+  }
+  .topbar-inner{
+    max-width:1180px;margin:0 auto;padding:14px 24px;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;
+  }
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces',serif;font-size:1.25rem;font-weight:700}
+  .brand .mark{
+    width:30px;height:30px;border-radius:50%;
+    background:conic-gradient(from 200deg, var(--saffron), var(--terracotta), var(--gold), var(--saffron));
+    flex:none;
+  }
+  .city-tabs{display:flex;gap:6px;background:rgba(255,255,255,.06);padding:5px;border-radius:999px}
+  .city-tabs button{
+    font-family:'Inter',sans-serif;font-weight:600;font-size:.92rem;
+    background:transparent;border:none;color:#cfd3e6;
+    padding:8px 18px;border-radius:999px;cursor:pointer;transition:.2s;
+  }
+  .city-tabs button.active{background:var(--saffron);color:var(--indigo)}
+  .city-tabs button:not(.active):hover{color:#fff}
+  .curr-badge{font-size:.78rem;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);padding:5px 12px;border-radius:999px;color:#e9dcc0;white-space:nowrap}
+
+  /* ---- Hero ---- */
+  .hero{position:relative;min-height:64vh;display:flex;align-items:flex-end;color:#fff;overflow:hidden}
+  .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .hero::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg, rgba(15,18,36,.15) 0%, rgba(15,18,36,.35) 45%, rgba(12,14,28,.92) 100%);
+  }
+  .hero-content{position:relative;z-index:2;padding:64px 24px 46px;max-width:1180px;margin:0 auto;width:100%}
+  .eyebrow{font-size:.82rem;letter-spacing:.04em;color:var(--saffron);font-weight:600;margin-bottom:10px}
+  .hero h1{font-size:clamp(2.4rem,5.5vw,4rem);line-height:1.02;margin-bottom:14px}
+  .hero p{max-width:560px;font-size:1.08rem;color:#e7e2d3}
+  .hero-stats{display:flex;gap:28px;margin-top:26px;flex-wrap:wrap}
+  .hero-stats div{border-left:2px solid var(--saffron);padding-left:12px}
+  .hero-stats b{display:block;font-family:'Fraunces',serif;font-size:1.3rem}
+  .hero-stats span{font-size:.82rem;color:#cfc9b8}
+
+  /* ---- Section shell ---- */
+  section.block{padding:64px 0}
+  section.block.alt{background:var(--paper)}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px;gap:20px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(1.7rem,3vw,2.3rem)}
+  .sec-head p{color:#5b5647;max-width:480px;font-size:.98rem}
+  .tag{display:inline-block;font-size:.78rem;font-weight:600;color:var(--terracotta);letter-spacing:.03em;margin-bottom:8px}
+
+  /* ---- Cards: places ---- */
+  .grid{display:grid;gap:22px}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:900px){.grid.cols-3,.grid.cols-2{grid-template-columns:1fr}}
+
+  .place-card{background:var(--paper);border:1px solid var(--ivory-2);overflow:hidden;transition:.25s}
+  .place-card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(28,36,64,.12)}
+  .place-card .ph{height:190px;overflow:hidden;position:relative}
+  .place-card .ph img{width:100%;height:100%;object-fit:cover}
+  .place-card .body{padding:18px 20px 22px}
+  .place-card h3{font-size:1.15rem;margin-bottom:6px}
+  .place-card p{font-size:.92rem;color:#544f42}
+  .meta-row{display:flex;gap:14px;margin-top:12px;font-size:.8rem;color:var(--teal);font-weight:600}
+
+  /* ---- Hotels ---- */
+  .hotel-card{background:var(--paper);border:1px solid var(--ivory-2);display:flex;flex-direction:column}
+  .hotel-card .ph{height:170px;overflow:hidden;background:linear-gradient(135deg,var(--indigo-2),var(--terracotta))}
+  .hotel-card .ph img{width:100%;height:100%;object-fit:cover}
+  .hotel-card .ph.noimg{display:flex;align-items:center;justify-content:center;color:#f1e4c8;font-family:'Fraunces',serif;font-size:1.1rem;text-align:center;padding:14px}
+  .hotel-card .body{padding:18px 20px;flex:1;display:flex;flex-direction:column}
+  .stars{color:var(--saffron);font-size:.85rem;margin-bottom:4px;letter-spacing:1px}
+  .hotel-card h3{font-size:1.08rem;margin-bottom:4px}
+  .hotel-card .loc{font-size:.82rem;color:#7a7364;margin-bottom:10px}
+  .price-row{margin-top:auto;display:flex;align-items:baseline;justify-content:space-between;padding-top:12px;border-top:1px solid var(--ivory-2)}
+  .price{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--terracotta)}
+  .price small{font-family:'Inter',sans-serif;font-size:.72rem;color:#8a8372;font-weight:500}
+  .btn{
+    display:inline-block;background:var(--indigo);color:#fff;text-decoration:none;
+    font-size:.82rem;font-weight:600;padding:9px 16px;border-radius:4px;transition:.2s;white-space:nowrap;
+  }
+  .btn:hover{background:var(--terracotta)}
+  .btn.ghost{background:transparent;border:1.5px solid var(--indigo);color:var(--indigo)}
+  .btn.ghost:hover{background:var(--indigo);color:#fff}
+  .btn.on-dark{background:var(--saffron);color:var(--indigo)}
+  .btn.on-dark:hover{background:#fff}
+
+  /* ---- Restaurants ---- */
+  .resto-card{background:var(--paper);border:1px solid var(--ivory-2);padding:20px 22px;display:flex;flex-direction:column;gap:10px}
+  .resto-card h3{font-size:1.08rem}
+  .resto-card .cuisine{font-size:.8rem;color:var(--teal);font-weight:600}
+  .resto-card p{font-size:.9rem;color:#544f42}
+  .resto-foot{display:flex;justify-content:space-between;align-items:center;margin-top:6px;padding-top:12px;border-top:1px solid var(--ivory-2)}
+  .resto-foot .cost{font-size:.85rem;font-weight:600;color:var(--terracotta)}
+
+  /* ---- Rivers/lakes ---- */
+  .river-card{position:relative;height:260px;overflow:hidden;color:#fff}
+  .river-card img{width:100%;height:100%;object-fit:cover}
+  .river-card .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(10,12,24,.85),rgba(10,12,24,.05));display:flex;align-items:flex-end;padding:20px}
+  .river-card h3{font-size:1.15rem}
+  .river-card p{font-size:.85rem;color:#e6e1d2;margin-top:4px}
+
+  /* ---- Map / directions ---- */
+  .map-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:0;border:1px solid var(--ivory-2);background:var(--paper)}
+  @media(max-width:900px){.map-wrap{grid-template-columns:1fr}}
+  .map-wrap iframe{width:100%;height:100%;min-height:400px;border:0}
+  .directions{padding:26px 28px}
+  .directions h3{font-size:1.2rem;margin-bottom:14px}
+  .dir-item{display:flex;gap:12px;padding:11px 0;border-bottom:1px solid var(--ivory-2);font-size:.92rem}
+  .dir-item:last-child{border-bottom:none}
+  .dir-item .dot{width:8px;height:8px;border-radius:50%;background:var(--saffron);margin-top:6px;flex:none}
+  .dir-item b{display:block;font-size:.95rem}
+  .dir-item span{color:#726c5c;font-size:.85rem}
+
+  /* ---- Booking panel ---- */
+  .booking{background:var(--indigo);color:var(--ivory);padding:56px 0}
+  .booking h2{color:#fff}
+  .booking .sec-head p{color:#c9c4b3}
+  .book-form{
+    background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);
+    border-radius:8px;padding:26px;display:grid;grid-template-columns:1.3fr 1fr 1fr auto;gap:14px;align-items:end;
+  }
+  @media(max-width:800px){.book-form{grid-template-columns:1fr 1fr}}
+  .book-form label{display:block;font-size:.76rem;color:#c9c4b3;margin-bottom:6px;font-weight:600;letter-spacing:.02em}
+  .book-form select,.book-form input{
+    width:100%;padding:11px 12px;border-radius:5px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(255,255,255,.08);color:#fff;font-family:'Inter',sans-serif;font-size:.92rem;
+  }
+  .book-form select option{color:#111}
+  .book-links{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+
+  /* ---- Video ---- */
+  .video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:6px;overflow:hidden}
+  .video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+  .video-note{font-size:.82rem;color:#6d6858;margin-top:10px}
+
+  footer{background:#12162a;color:#a7a293;padding:40px 0;font-size:.85rem;text-align:center}
+  footer a{color:#e2932e;text-decoration:none}
+
+  .divider{height:3px;background:linear-gradient(90deg,var(--saffron),var(--terracotta),var(--gold));margin:0}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="mark"></span>Bharat Trails</div>
+    <div class="city-tabs" id="cityTabs">
+      <button data-city="udaipur" class="active">Udaipur</button>
+      <button data-city="hyderabad">Hyderabad</button>
+      <button data-city="kolkata">Kolkata</button>
+    </div>
+    <div class="curr-badge">Prices shown in ₹ Indian Rupees</div>
+  </div>
+</div>
+<div class="divider"></div>
+
+<!-- ===================== UDAIPUR ===================== -->
+<div class="city-page" id="page-udaipur">
+
+  <section class="hero">
+    <img src="https://images.trvl-media.com/place/3610/37244a92-8cbe-4a48-a264-e1d0d8640eb8.jpg?impolicy=fcrop&w=1600&h=900&q=high" alt="Aerial view of Udaipur City Palace and Lake Pichola">
+    <div class="hero-content">
+      <div class="eyebrow">RAJASTHAN · THE CITY OF LAKES</div>
+      <h1>Udaipur</h1>
+      <p>Marble palaces on the water's edge, royal history at every turn, and the Aravalli hills standing guard over it all — Udaipur is India's most romantic city.</p>
+      <div class="hero-stats">
+        <div><b>7</b><span>City lakes</span></div>
+        <div><b>400+ yrs</b><span>City Palace history</span></div>
+        <div><b>₹25–₹45k</b><span>Luxury stay / night</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Heritage &amp; Landmarks</span><h2>Historical places to see</h2></div>
+        <p>The palaces, temples and havelis that give Udaipur its royal Mewar character.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6106466/7aee3c99-a985-4c16-a53e-ea22f545791d.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="City Palace Udaipur"></div>
+          <div class="body">
+            <h3>City Palace</h3>
+            <p>An 11-palace complex built over 400 years by the Mewar dynasty, with mirror halls, crystal galleries and views over Lake Pichola.</p>
+            <div class="meta-row"><span>₹300 entry</span><span>9 AM – 5:30 PM</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6126894/d8c1cb36-1ded-4b71-bd79-015d3c0ef5af.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Lake Palace on Lake Pichola"></div>
+          <div class="body">
+            <h3>Lake Palace &amp; Jag Mandir</h3>
+            <p>A white-marble palace that appears to float on Lake Pichola — now a heritage hotel, reachable by boat from the City Palace jetty.</p>
+            <div class="meta-row"><span>₹700 boat ride</span><span>Sunset best</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/944539047777411072/59e58c30-8319-4af0-a3f9-566a542876a5.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Inside City Palace Udaipur"></div>
+          <div class="body">
+            <h3>Jagdish Temple</h3>
+            <p>A 17th-century Indo-Aryan temple dedicated to Lord Vishnu, just steps from the City Palace, known for its intricate stone carving.</p>
+            <div class="meta-row"><span>Free entry</span><span>5 min walk from Palace</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Stay</span><h2>Top hotels in Udaipur</h2></div>
+        <p>From heritage palaces to comfortable budget stays, priced per night in ₹.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="hotel-card">
+          <div class="ph"><img src="https://images.trvl-media.com/lodging/125000000/124300000/124294100/124294064/7c634572_y.jpg?impolicy=resizecrop&rw=700&ch=400" alt="Moti Mahal Lakeview Pichola Hotel"></div>
+          <div class="body">
+            <div class="stars">★★★★★</div>
+            <h3>Taj Lake Palace</h3>
+            <div class="loc">On Lake Pichola — iconic heritage palace</div>
+            <div class="price-row"><span class="price">₹38,000<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Udaipur%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph"><img src="https://images.trvl-media.com/lodging/31000000/30620000/30615400/30615317/0cc17e09_y.jpg?impolicy=resizecrop&rw=700&ch=400" alt="Kintsugi at Rangniwas Udaipur"></div>
+          <div class="body">
+            <div class="stars">★★★★</div>
+            <h3>Kintsugi at Rangniwas</h3>
+            <div class="loc">Old Town — boutique heritage stay near City Palace</div>
+            <div class="price-row"><span class="price">₹9,500<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Udaipur%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph noimg">Budget stay<br>near Lal Ghat</div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <h3>Zostel / Old City guesthouses</h3>
+            <div class="loc">Lal Ghat — walking distance to the lake</div>
+            <div class="price-row"><span class="price">₹1,400<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Udaipur%2C+India">Check rates</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Eat</span><h2>Top restaurants</h2></div>
+        <p>Lakeside dining, Rajasthani thalis and rooftop views.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="resto-card">
+          <h3>Ambrai Restaurant</h3>
+          <div class="cuisine">Rajasthani · North Indian</div>
+          <p>Open-air garden dining right on Lake Pichola, facing the illuminated City Palace at night.</p>
+          <div class="resto-foot"><span class="cost">₹1,800 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/udaipur/ambrai-lal-ghat">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Upre by 1559 AD</h3>
+          <div class="cuisine">Multi-cuisine rooftop</div>
+          <p>Rooftop terrace above Jagdish Chowk with panoramic views over the City Palace and lake.</p>
+          <div class="resto-foot"><span class="cost">₹2,200 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/udaipur/upre-by-1559-ad-city-palace">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Millets of Mewar</h3>
+          <div class="cuisine">Organic · Local thali</div>
+          <p>Home-style Mewari thalis made with local millets — a favourite among long-stay travellers.</p>
+          <div class="resto-foot"><span class="cost">₹700 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/udaipur/millets-of-mewar-chandpole">Reserve</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Water &amp; Nature</span><h2>Lakes of Udaipur</h2></div>
+        <p>Udaipur has no beach, but its seven interlinked lakes are its defining natural feature.</p>
+      </div>
+      <div class="grid cols-2">
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6126894/d8c1cb36-1ded-4b71-bd79-015d3c0ef5af.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Lake Pichola"><div class="overlay"><div><h3>Lake Pichola</h3><p>The city's central lake, built in 1362 — boat rides run from the City Palace jetty every day.</p></div></div></div>
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6126895/7d9d0790-63a2-41ee-a136-84db66365154.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Fateh Sagar Lake"><div class="overlay"><div><h3>Fateh Sagar Lake</h3><p>A quieter lake north of the old city with Nehru Park island and hillside viewpoints.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Getting around</span><h2>Map &amp; directions</h2></div>
+        <p>Most sights sit within 2–3 km of the City Palace.</p>
+      </div>
+      <div class="map-wrap">
+        <iframe loading="lazy" src="https://www.google.com/maps?q=City+Palace+Udaipur&output=embed"></iframe>
+        <div class="directions">
+          <h3>From City Palace</h3>
+          <div class="dir-item"><span class="dot"></span><div><b>Lake Pichola boat jetty</b><span>Inside the City Palace complex — 2 min walk</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Jagdish Temple</b><span>400 m north — 5 min walk</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Fateh Sagar Lake</b><span>3.5 km north — 12 min by auto-rickshaw</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Maharana Pratap Airport (UDR)</b><span>22 km east — 40 min by taxi</span></div></div>
+          <a class="btn ghost" style="margin-top:16px" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=City+Palace+Udaipur">Open full directions</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head"><div><span class="tag">Watch</span><h2>Udaipur on film</h2></div></div>
+      <div class="video-frame"><iframe src="https://www.youtube.com/embed/Q1ayhHWD5sw" title="Udaipur travel video" allowfullscreen></iframe></div>
+      <p class="video-note">Travel documentary on Udaipur, embedded from YouTube (DW Travel).</p>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== HYDERABAD ===================== -->
+<div class="city-page" id="page-hyderabad" style="display:none">
+
+  <section class="hero">
+    <img src="https://images.trvl-media.com/place/6104580/199de593-ece7-4e63-8f98-344704389a46.jpg?impolicy=fcrop&w=1600&h=900&q=high" alt="Charminar Hyderabad">
+    <div class="hero-content">
+      <div class="eyebrow">TELANGANA · THE CITY OF PEARLS</div>
+      <h1>Hyderabad</h1>
+      <p>Qutb Shahi forts, Nizami palaces, pearl bazaars and the country's most celebrated biryani — Hyderabad blends Deccan history with a fast-moving modern city.</p>
+      <div class="hero-stats">
+        <div><b>1591</b><span>Charminar built</span></div>
+        <div><b>10km</b><span>Golconda Fort walls</span></div>
+        <div><b>₹5–₹25k</b><span>Hotel range / night</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Heritage &amp; Landmarks</span><h2>Historical places to see</h2></div>
+        <p>From Qutb Shahi forts to Nizam-era palaces.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6104580/a324d8b9-8df9-4d94-8d4b-35075a1ba579.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Charminar market"></div>
+          <div class="body">
+            <h3>Charminar</h3>
+            <p>Built in 1591 by Muhammad Quli Qutb Shah, this four-minaret monument is the symbol of Hyderabad, ringed by the Laad Bazaar market.</p>
+            <div class="meta-row"><span>₹25 entry</span><span>9:30 AM – 5:30 PM</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6104596/f9852750-020f-4998-b7fe-220cb949c2b7.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Golconda Fort"></div>
+          <div class="body">
+            <h3>Golconda Fort</h3>
+            <p>A hilltop citadel once the capital of the diamond-trading Qutb Shahi kingdom, famous for its acoustic engineering and sound-and-light show.</p>
+            <div class="meta-row"><span>₹100 entry</span><span>7 AM – 6 PM</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6104598/b745dd6d-669d-462c-b7cf-dcc0ccf4d14b.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Chowmahalla Palace"></div>
+          <div class="body">
+            <h3>Chowmahalla Palace</h3>
+            <p>The official seat of the Nizams, an 18th-century complex of four courtyards, chandeliers and a vintage royal car collection.</p>
+            <div class="meta-row"><span>₹150 entry</span><span>10 AM – 5 PM</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Stay</span><h2>Top hotels in Hyderabad</h2></div>
+        <p>Priced per night in ₹.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="hotel-card">
+          <div class="ph noimg">Taj Falaknuma<br>Palace</div>
+          <div class="body">
+            <div class="stars">★★★★★</div>
+            <h3>Taj Falaknuma Palace</h3>
+            <div class="loc">A former Nizam palace overlooking the city</div>
+            <div class="price-row"><span class="price">₹27,000<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Hyderabad%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph noimg">ITC Kohenur</div>
+          <div class="body">
+            <div class="stars">★★★★★</div>
+            <h3>ITC Kohenur</h3>
+            <div class="loc">HITEC City — business &amp; leisure</div>
+            <div class="price-row"><span class="price">₹9,200<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Hyderabad%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph noimg">Budget stay<br>near Abids</div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <h3>Treebo / FabHotel, Abids</h3>
+            <div class="loc">Central, close to Charminar &amp; railway station</div>
+            <div class="price-row"><span class="price">₹1,700<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Hyderabad%2C+India">Check rates</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Eat</span><h2>Top restaurants</h2></div>
+        <p>The birthplace of Hyderabadi biryani.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="resto-card">
+          <h3>Paradise, Secunderabad</h3>
+          <div class="cuisine">Hyderabadi biryani</div>
+          <p>The city's most famous biryani institution since 1953, serving the signature dum biryani.</p>
+          <div class="resto-foot"><span class="cost">₹900 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/hyderabad/paradise-secunderabad">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Bawarchi, RTC X Roads</h3>
+          <div class="cuisine">Hyderabadi · Biryani</div>
+          <p>A long-running local favourite known for generous portions and spicy mirchi ka salan.</p>
+          <div class="resto-foot"><span class="cost">₹700 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/hyderabad/bawarchi-rtc-x-roads">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Shah Ghouse, Tolichowki</h3>
+          <div class="cuisine">Hyderabadi · Haleem</div>
+          <p>Famous for haleem in Ramzan season and slow-cooked biryani year-round.</p>
+          <div class="resto-foot"><span class="cost">₹650 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/hyderabad/shah-ghouse-cafe-restaurant-tolichowki">Reserve</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Water &amp; Nature</span><h2>Lakes &amp; river</h2></div>
+        <p>Hyderabad has no sea coast — the nearest beaches (Visakhapatnam) are about 620 km away.</p>
+      </div>
+      <div class="grid cols-2">
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6189695/ccd7943e-459b-409e-91a1-83586f0d9bb8.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Hussain Sagar Lake"><div class="overlay"><div><h3>Hussain Sagar Lake</h3><p>A vast man-made lake built in 1563, with the giant Buddha statue on Rock of Gandipet at its centre.</p></div></div></div>
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6104596/a375e5ac-b453-4500-a030-20f4be932db1.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Musi River near Golconda"><div class="overlay"><div><h3>Musi River</h3><p>The river that runs through the old city, crossed by the historic Purana Pul and Afzal Gunj bridges.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Getting around</span><h2>Map &amp; directions</h2></div>
+        <p>Old City sights cluster around Charminar; Golconda is 9 km west.</p>
+      </div>
+      <div class="map-wrap">
+        <iframe loading="lazy" src="https://www.google.com/maps?q=Charminar+Hyderabad&output=embed"></iframe>
+        <div class="directions">
+          <h3>From Charminar</h3>
+          <div class="dir-item"><span class="dot"></span><div><b>Chowmahalla Palace</b><span>600 m west — 8 min walk</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Golconda Fort</b><span>9 km west — 25 min by taxi</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Hussain Sagar Lake</b><span>7 km north — 20 min by taxi</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Rajiv Gandhi Intl Airport (HYD)</b><span>32 km south — 50 min by taxi</span></div></div>
+          <a class="btn ghost" style="margin-top:16px" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=Charminar+Hyderabad">Open full directions</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head"><div><span class="tag">Watch</span><h2>Hyderabad on film</h2></div></div>
+      <div class="video-frame" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--indigo),var(--terracotta));color:#fff;text-align:center;padding:20px">
+        <div>
+          <p style="font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:14px">Charminar, Golconda Fort &amp; Hyderabadi biryani</p>
+          <a class="btn on-dark" target="_blank" href="https://www.youtube.com/results?search_query=Hyderabad+travel+guide+Charminar+Golconda">Watch travel guides on YouTube →</a>
+        </div>
+      </div>
+      <p class="video-note">I couldn't verify a specific video link stays live for Hyderabad, so this opens a live YouTube search instead of an embed.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== KOLKATA ===================== -->
+<div class="city-page" id="page-kolkata" style="display:none">
+
+  <section class="hero">
+    <img src="https://images.trvl-media.com/place/6106912/87570a88-61e5-4c39-94f0-9dd3d8504dee.jpg?impolicy=fcrop&w=1600&h=900&q=high" alt="Victoria Memorial Kolkata">
+    <div class="hero-content">
+      <div class="eyebrow">WEST BENGAL · THE CITY OF JOY</div>
+      <h1>Kolkata</h1>
+      <p>The former capital of British India — colonial architecture, the Hooghly riverfront, trams, and a cultural life built on art, literature and food.</p>
+      <div class="hero-stats">
+        <div><b>1921</b><span>Victoria Memorial opened</span></div>
+        <div><b>705m</b><span>Howrah Bridge span</span></div>
+        <div><b>₹1.6–₹14k</b><span>Hotel range / night</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Heritage &amp; Landmarks</span><h2>Historical places to see</h2></div>
+        <p>Grand colonial-era buildings and riverside icons.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6106912/87570a88-61e5-4c39-94f0-9dd3d8504dee.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Victoria Memorial"></div>
+          <div class="body">
+            <h3>Victoria Memorial</h3>
+            <p>A white-marble monument built in 1921 in memory of Queen Victoria, now a museum set in 64 acres of gardens.</p>
+            <div class="meta-row"><span>₹30 entry</span><span>10 AM – 5 PM</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6106942/a3987db0-39e9-48c5-9d16-54cf9afb9c2c.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Howrah Bridge"></div>
+          <div class="body">
+            <h3>Howrah Bridge</h3>
+            <p>A 705-metre cantilever bridge over the Hooghly River, among the busiest bridges in the world — best seen at sunrise from a river ferry.</p>
+            <div class="meta-row"><span>Free to cross</span><span>Sunrise best</span></div>
+          </div>
+        </div>
+        <div class="place-card">
+          <div class="ph"><img src="https://images.trvl-media.com/place/6106970/7846199f-896a-48e7-9ea5-e4f21f8ed4ee.jpg?impolicy=fcrop&w=700&h=460&q=high" alt="Dakshineswar Kali Temple"></div>
+          <div class="body">
+            <h3>Dakshineswar Kali Temple</h3>
+            <p>A riverside Kali temple built in 1855 on the banks of the Hooghly, linked to the sage Ramakrishna.</p>
+            <div class="meta-row"><span>Free entry</span><span>6 AM – 12:30 PM, 3–8:30 PM</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Stay</span><h2>Top hotels in Kolkata</h2></div>
+        <p>Priced per night in ₹.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="hotel-card">
+          <div class="ph noimg">The Oberoi Grand</div>
+          <div class="body">
+            <div class="stars">★★★★★</div>
+            <h3>The Oberoi Grand</h3>
+            <div class="loc">Chowringhee — colonial-era grand hotel</div>
+            <div class="price-row"><span class="price">₹13,500<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Kolkata%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph noimg">Taj Bengal</div>
+          <div class="body">
+            <div class="stars">★★★★★</div>
+            <h3>Taj Bengal</h3>
+            <div class="loc">Alipore — near the zoo &amp; Victoria Memorial</div>
+            <div class="price-row"><span class="price">₹10,200<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Kolkata%2C+India">Check rates</a></div>
+          </div>
+        </div>
+        <div class="hotel-card">
+          <div class="ph noimg">Budget stay<br>near Park Street</div>
+          <div class="body">
+            <div class="stars">★★★</div>
+            <h3>FabHotel / Treebo, Park Street</h3>
+            <div class="loc">Central, walkable to New Market</div>
+            <div class="price-row"><span class="price">₹1,600<small> /night</small></span><a class="btn" target="_blank" href="https://www.booking.com/searchresults.html?ss=Kolkata%2C+India">Check rates</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Eat</span><h2>Top restaurants</h2></div>
+        <p>Bengali classics and old Anglo-Indian institutions.</p>
+      </div>
+      <div class="grid cols-3">
+        <div class="resto-card">
+          <h3>6 Ballygunge Place</h3>
+          <div class="cuisine">Traditional Bengali</div>
+          <p>A heritage-mansion restaurant serving authentic Bengali thalis — kosha mangsho, shorshe ilish and more.</p>
+          <div class="resto-foot"><span class="cost">₹1,500 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/kolkata/6-ballygunge-place-ballygunge">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Peter Cat, Park Street</h3>
+          <div class="cuisine">Continental · Kebabs</div>
+          <p>Famous since 1975 for its Chelo Kebab, a Park Street institution loved by generations of Kolkatans.</p>
+          <div class="resto-foot"><span class="cost">₹1,200 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/kolkata/peter-cat-park-street-area">Reserve</a></div>
+        </div>
+        <div class="resto-card">
+          <h3>Oh! Calcutta</h3>
+          <div class="cuisine">Bengali fine dining</div>
+          <p>Upscale Bengali cuisine in a nostalgic, old-Calcutta setting — a favourite for prawn malai curry.</p>
+          <div class="resto-foot"><span class="cost">₹1,800 for two</span><a class="btn ghost" target="_blank" href="https://www.zomato.com/kolkata/oh-calcutta-1-elgin-road-camac-street">Reserve</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Water &amp; Nature</span><h2>River &amp; nearest beaches</h2></div>
+        <p>Kolkata sits on the Hooghly, a distributary of the Ganges; the closest sea beaches are on the Bay of Bengal.</p>
+      </div>
+      <div class="grid cols-2">
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6106942/a3987db0-39e9-48c5-9d16-54cf9afb9c2c.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Hooghly River at Howrah Bridge"><div class="overlay"><div><h3>Hooghly River</h3><p>Take a ferry or river cruise between Millennium Park and Howrah for the classic bridge view.</p></div></div></div>
+        <div class="river-card"><img src="https://images.trvl-media.com/place/6106920/425bbf2d-dbf7-4797-98ac-70e7bb2d8633.jpg?impolicy=fcrop&w=900&h=520&q=high" alt="Kolkata street near New Market"><div class="overlay"><div><h3>Nearest beaches — Digha &amp; Mandarmani</h3><p>Bay of Bengal beach towns roughly 185 km and 175 km south-west, popular weekend trips from the city.</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="sec-head">
+        <div><span class="tag">Getting around</span><h2>Map &amp; directions</h2></div>
+        <p>Central sights cluster around Chowringhee and the Maidan.</p>
+      </div>
+      <div class="map-wrap">
+        <iframe loading="lazy" src="https://www.google.com/maps?q=Victoria+Memorial+Kolkata&output=embed"></iframe>
+        <div class="directions">
+          <h3>From Victoria Memorial</h3>
+          <div class="dir-item"><span class="dot"></span><div><b>New Market</b><span>2.5 km north — 10 min by taxi</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Howrah Bridge</b><span>5 km north-west — 18 min by taxi</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Dakshineswar Temple</b><span>16 km north — 45 min by taxi</span></div></div>
+          <div class="dir-item"><span class="dot"></span><div><b>Netaji Subhas Chandra Bose Airport (CCU)</b><span>18 km north-east — 45 min by taxi</span></div></div>
+          <a class="btn ghost" style="margin-top:16px" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination=Victoria+Memorial+Kolkata">Open full directions</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <div class="sec-head"><div><span class="tag">Watch</span><h2>Kolkata on film</h2></div></div>
+      <div class="video-frame" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--indigo),var(--teal));color:#fff;text-align:center;padding:20px">
+        <div>
+          <p style="font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:14px">Victoria Memorial, Howrah Bridge &amp; the Hooghly riverfront</p>
+          <a class="btn on-dark" target="_blank" href="https://www.youtube.com/results?search_query=Kolkata+travel+guide+Victoria+Memorial+Howrah+Bridge">Watch travel guides on YouTube →</a>
+        </div>
+      </div>
+      <p class="video-note">I couldn't verify a specific video link stays live for Kolkata, so this opens a live YouTube search instead of an embed.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== BOOKING (shared) ===================== -->
+<section class="booking">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="tag" style="color:var(--saffron)">Plan your trip</span><h2>Book your stay</h2></div>
+      <p>Pick a city and dates — this opens live hotel search results in a new tab.</p>
+    </div>
+    <div class="book-form">
+      <div>
+        <label>Destination</label>
+        <select id="bookCity">
+          <option value="Udaipur, India">Udaipur</option>
+          <option value="Hyderabad, India">Hyderabad</option>
+          <option value="Kolkata, India">Kolkata</option>
+        </select>
+      </div>
+      <div>
+        <label>Check-in</label>
+        <input type="date" id="bookIn">
+      </div>
+      <div>
+        <label>Check-out</label>
+        <input type="date" id="bookOut">
+      </div>
+      <div>
+        <a class="btn on-dark" id="bookGo" href="#" target="_blank" style="text-align:center">Search hotels →</a>
+      </div>
+    </div>
+    <div class="book-links">
+      <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" target="_blank" href="https://www.makemytrip.com/hotels/">Compare on MakeMyTrip</a>
+      <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" target="_blank" href="https://www.irctc.co.in/">Book trains — IRCTC</a>
+      <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.4)" target="_blank" href="https://www.goibibo.com/flights/">Book flights — Goibibo</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Bharat Trails — a self-contained travel guide to Udaipur, Hyderabad &amp; Kolkata. Prices are approximate market averages in ₹, always confirm live rates before booking. Photography credit: Expedia travel guide archive. Video: YouTube.
+  </div>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('#cityTabs button');
+  const pages = { udaipur: document.getElementById('page-udaipur'), hyderabad: document.getElementById('page-hyderabad'), kolkata: document.getElementById('page-kolkata') };
+  tabs.forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      tabs.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      Object.keys(pages).forEach(k=>pages[k].style.display = (k===btn.dataset.city ? 'block':'none'));
+      window.scrollTo({top:0,behavior:'smooth'});
+      document.getElementById('bookCity').value = btn.dataset.city.charAt(0).toUpperCase()+btn.dataset.city.slice(1)+', India';
+    });
+  });
+
+  function updateBookLink(){
+    const city = document.getElementById('bookCity').value;
+    const cin = document.getElementById('bookIn').value;
+    const cout = document.getElementById('bookOut').value;
+    let url = 'https://www.booking.com/searchresults.html?ss=' + encodeURIComponent(city);
+    if(cin) url += '&checkin=' + cin;
+    if(cout) url += '&checkout=' + cout;
+    document.getElementById('bookGo').href = url;
+  }
+  ['bookCity','bookIn','bookOut'].forEach(id=>document.getElementById(id).addEventListener('change', updateBookLink));
+  updateBookLink();
+</script>
+</body>
+</html>
